@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TarotArcana {
+  MAJOR
+  MINOR
+}
+
+enum TarotSuit {
+  WANDS
+  CUPS
+  SWORDS
+  PENTACLES
+}
+
+enum DrawOrientation {
+  UPRIGHT
+  REVERSED
+}
+
+model TarotCard {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  nameEn        String
+  nameKo        String
+  arcana        TarotArcana
+  suit          TarotSuit?
+  rank          String?
+  sortKey       Int
+
+  imageUrl      String?
+  thumbnailUrl  String?
+
+  keywords      String[]    @default([])
+  description   String      @default("데이터 준비 중")
+  uprightPoints String      @default("데이터 준비 중")
+  reversedPoints String     @default("데이터 준비 중")
+
+  drawItems     DrawItem[]
+
+  @@unique([nameEn])
+  @@index([arcana, suit, sortKey])
+}
+
+model Draw {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  date          String      // YYYY-MM-DD
+  drawnAt       DateTime
+  cardCount     Int
+
+  model         String?
+  promptVersion Int
+  promptText    String
+
+  summaryOneLine String?
+  readingText    String
+
+  items         DrawItem[]
+
+  @@index([date])
+  @@index([drawnAt])
+}
+
+model DrawItem {
+  id           String          @id @default(uuid())
+  createdAt    DateTime        @default(now())
+
+  drawId       String
+  tarotCardId  String
+  position     Int
+  orientation  DrawOrientation
+
+  draw         Draw            @relation(fields: [drawId], references: [id], onDelete: Cascade)
+  tarotCard    TarotCard       @relation(fields: [tarotCardId], references: [id])
+
+  @@unique([drawId, position])
+  @@index([tarotCardId])
+}
+
+
+

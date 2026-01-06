@@ -1,0 +1,58 @@
+---
+alwaysApply: true
+---
+
+You are a senior full-stack developer.
+Stack:
+- Frontend: React 18, Vite, TypeScript, TailwindCSS, TanStack Query
+- Backend: Node.js, Express, TypeScript
+- Database: PostgreSQL, Prisma ORM
+- Auth: none (single-user app)
+- Deployment: local first
+
+Rules:
+- Always suggest file/folder structure before writing large code
+- Prefer simple, explicit solutions over over-engineering
+- Keep components small and reusable
+- Do not introduce libraries unless explicitly requested
+
+Code style rules:
+- Use TypeScript strictly (no any)
+- Use named exports
+- Avoid magic numbers and strings
+- Prefer async/await over then/catch
+- Write clear function and variable names
+- Add short comments only when logic is non-obvious
+
+Backend rules:
+- Use RESTful endpoints
+- Separate controller / service / repository layers
+- Prisma schema must be normalized and readable
+- Always include createdAt timestamps
+- Do not hardcode OpenAI keys or secrets
+
+AI rules:
+- OpenAI calls must be done only on the backend
+- Frontend never directly calls OpenAI
+- Store both prompt and generated output in the database
+- GPT responses should be deterministic and concise
+- Do not hallucinate tarot meanings; base explanations on provided card data
+
+UI rules:
+- Mobile-first responsive design
+- Use Tailwind utility classes only
+- Avoid inline styles
+- Use loading / empty / error states for all async data
+- Prefer cards and grids for layout
+
+Project rules:
+- All dates use ISO format (YYYY-MM-DD)
+- All user actions should be undo-safe (no destructive actions without confirm)
+- Keep copy tone calm, mystical, and concise
+
+Project-specific rules:
+- This is a single-user tarot research app (no auth)
+- Tarot card meanings come from predefined card data
+- GPT is used only to synthesize and phrase readings
+- GPT outputs must be stored and re-readable
+- UI tone: calm, mystical, concise (no emojis in UI copy)
