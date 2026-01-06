@@ -5,6 +5,7 @@ import type { DrawItemDto } from "@shared/contracts/draw.contract";
 import { apiGet } from "@/lib/api";
 import { Badge, Button, Card } from "@/components/common/ui";
 import { format, parseISO } from "date-fns";
+import { getCardThumbnailSrc } from "@/lib/card-image";
 
 export function HistoryDetailPage() {
   const { drawId } = useParams();
@@ -18,7 +19,7 @@ export function HistoryDetailPage() {
   if (!drawId) {
     return (
       <Card title="기록 상세" description="잘못된 접근입니다.">
-        <Link to="/history" className="text-sm text-indigo-300 hover:text-indigo-200">
+        <Link to="/history" className="text-sm text-amber-100/80 hover:text-amber-100">
           달력으로
         </Link>
       </Card>
@@ -76,7 +77,7 @@ function HistoryCardItem(props: { item: DrawItemDto }) {
   return (
     <div className="flex items-center gap-3 rounded-lg border border-slate-200/10 bg-slate-950/20 px-3 py-3 backdrop-blur">
       <img
-        src={it.card.thumbnailUrl ?? "/card-back.svg"}
+        src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
         className="h-14 w-10 rounded border border-slate-200/10 object-cover"
       />

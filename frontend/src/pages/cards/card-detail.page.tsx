@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import type { GetTarotCardResponse, TarotSuit } from "@shared/contracts/cards.contract";
 import { apiGet } from "@/lib/api";
 import { Badge, Button, Card } from "@/components/common/ui";
+import { getCardFullSrc } from "@/lib/card-image";
 
 export function CardDetailPage() {
   const { id } = useParams();
@@ -16,7 +17,7 @@ export function CardDetailPage() {
   if (!id) {
     return (
       <Card title="카드 상세" description="잘못된 접근입니다.">
-        <Link to="/cards" className="text-sm text-indigo-300 hover:text-indigo-200">
+        <Link to="/cards" className="text-sm text-amber-100/80 hover:text-amber-100">
           목록으로
         </Link>
       </Card>
@@ -52,7 +53,7 @@ function CardDetailContent(props: { data: GetTarotCardResponse }) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div>
           <img
-            src={c.imageUrl ?? "/card-back.svg"}
+            src={getCardFullSrc(c)}
             alt={c.nameKo}
             className="w-full rounded-xl border border-slate-200/10 object-cover"
           />

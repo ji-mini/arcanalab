@@ -1,0 +1,36 @@
+<svg width="520" height="520" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="110" y1="70" x2="420" y2="450" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE68A" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#F59E0B" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <circle cx="260" cy="260" r="210" stroke="url(#gold)" stroke-opacity="0.22"/>
+  <circle cx="260" cy="260" r="160" stroke="url(#gold)" stroke-opacity="0.16"/>
+  <!-- trunk -->
+  <path d="M260 410 C252 360, 250 320, 260 285 C270 320, 268 360, 260 410Z" stroke="url(#gold)" stroke-width="2" stroke-opacity="0.55" fill="none"/>
+  <!-- roots -->
+  <path d="M260 410 C230 425, 210 440, 180 446" stroke="url(#gold)" stroke-width="1.6" stroke-opacity="0.35"/>
+  <path d="M260 410 C290 425, 310 440, 340 446" stroke="url(#gold)" stroke-width="1.6" stroke-opacity="0.35"/>
+  <path d="M260 410 C248 430, 235 450, 220 462" stroke="url(#gold)" stroke-width="1.2" stroke-opacity="0.25"/>
+  <path d="M260 410 C272 430, 285 450, 300 462" stroke="url(#gold)" stroke-width="1.2" stroke-opacity="0.25"/>
+  <!-- branches -->
+  <path d="M260 285 C250 250, 220 230, 195 220" stroke="url(#gold)" stroke-width="1.8" stroke-opacity="0.45"/>
+  <path d="M260 285 C270 250, 300 230, 325 220" stroke="url(#gold)" stroke-width="1.8" stroke-opacity="0.45"/>
+  <path d="M240 250 C225 240, 205 225, 180 200" stroke="url(#gold)" stroke-width="1.2" stroke-opacity="0.30"/>
+  <path d="M280 250 C295 240, 315 225, 340 200" stroke="url(#gold)" stroke-width="1.2" stroke-opacity="0.30"/>
+  <!-- canopy arcs -->
+  <path d="M180 220 C220 150, 300 150, 340 220" stroke="url(#gold)" stroke-width="1.6" stroke-opacity="0.26"/>
+  <path d="M200 230 C235 180, 285 180, 320 230" stroke="url(#gold)" stroke-width="1.2" stroke-opacity="0.22"/>
+  <!-- subtle runes -->
+  <g stroke="url(#gold)" stroke-opacity="0.18">
+    <path d="M260 95 L260 110"/>
+    <path d="M260 410 L260 425"/>
+    <path d="M95 260 L110 260"/>
+    <path d="M410 260 L425 260"/>
+  </g>
+</svg>
+
+
+
+

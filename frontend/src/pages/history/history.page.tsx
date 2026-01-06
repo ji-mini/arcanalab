@@ -9,6 +9,7 @@ import type {
 } from "@shared/contracts/history.contract";
 import { apiGet } from "@/lib/api";
 import { Badge, Button, Card, Select } from "@/components/common/ui";
+import { getCardThumbnailSrc } from "@/lib/card-image";
 
 const WEEK_STARTS_ON = 1 as const; // ISO week (Mon)
 
@@ -100,14 +101,14 @@ export function HistoryPage() {
                 className={[
                   "rounded-lg border px-2 py-2 text-left",
                   inMonth
-                    ? "border-slate-200/10 bg-slate-950/20 hover:border-indigo-400/20"
+                    ? "border-slate-200/10 bg-slate-950/20 hover:border-amber-200/20"
                     : "border-slate-200/5 bg-slate-950/10 opacity-60",
-                  isSelected ? "ring-1 ring-indigo-400/40" : ""
+                  isSelected ? "ring-1 ring-amber-200/30" : ""
                 ].join(" ")}
               >
                 <div className="flex items-center justify-between">
                   <div className="text-xs text-slate-200">{d.getDate()}</div>
-                  {count > 0 ? <span className="h-2 w-2 rounded-full bg-indigo-400" /> : null}
+                  {count > 0 ? <span className="h-2 w-2 rounded-full bg-amber-200/80" /> : null}
                 </div>
                 {count > 1 ? <div className="mt-2 text-[11px] text-slate-400">{count}회</div> : null}
               </button>
@@ -131,7 +132,7 @@ export function HistoryPage() {
                 <Link
                   key={d.id}
                   to={`/history/${d.id}`}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-slate-200/10 bg-slate-950/20 px-4 py-3 hover:border-indigo-400/20"
+                  className="flex items-center justify-between gap-4 rounded-lg border border-slate-200/10 bg-slate-950/20 px-4 py-3 hover:border-amber-200/20"
                 >
                   <div className="min-w-0">
                     <div className="text-sm text-slate-200">
@@ -145,7 +146,7 @@ export function HistoryPage() {
                     {d.items.slice(0, 3).map((it) => (
                       <img
                         key={it.id}
-                        src={it.card.thumbnailUrl ?? "/card-back.svg"}
+                        src={getCardThumbnailSrc(it.card)}
                         alt={it.card.nameKo}
                         className="h-10 w-7 rounded border border-slate-200/10 object-cover"
                         loading="lazy"
@@ -206,7 +207,7 @@ export function HistoryPage() {
                 <Link
                   key={d.id}
                   to={`/history/${d.id}`}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-slate-200/10 bg-slate-950/20 px-4 py-3 hover:border-indigo-400/20"
+                  className="flex items-center justify-between gap-4 rounded-lg border border-slate-200/10 bg-slate-950/20 px-4 py-3 hover:border-amber-200/20"
                 >
                   <div className="min-w-0">
                     <div className="text-sm text-slate-200">
@@ -220,7 +221,7 @@ export function HistoryPage() {
                     {d.items.slice(0, 3).map((it) => (
                       <img
                         key={it.id}
-                        src={it.card.thumbnailUrl ?? "/card-back.svg"}
+                        src={getCardThumbnailSrc(it.card)}
                         alt={it.card.nameKo}
                         className="h-10 w-7 rounded border border-slate-200/10 object-cover"
                         loading="lazy"

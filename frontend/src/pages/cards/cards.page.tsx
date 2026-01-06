@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import type { ListTarotCardsResponse, TarotArcana, TarotSuit } from "@shared/contracts/cards.contract";
 import { apiGet } from "@/lib/api";
 import { Badge, Card, Select, TextInput } from "@/components/common/ui";
+import { getCardThumbnailSrc } from "@/lib/card-image";
 
 type ArcanaFilter = "ALL" | TarotArcana;
 type SuitFilter = "ALL" | TarotSuit;
@@ -73,10 +74,10 @@ export function CardsPage() {
             <Link
               key={c.id}
               to={`/cards/${c.id}`}
-              className="rounded-xl border border-slate-200/10 bg-slate-950/20 p-3 backdrop-blur hover:border-indigo-400/20"
+              className="rounded-xl border border-slate-200/10 bg-slate-950/15 p-3 backdrop-blur hover:border-amber-200/25"
             >
               <img
-                src={c.thumbnailUrl ?? "/card-back.svg"}
+                src={getCardThumbnailSrc(c)}
                 alt={c.nameKo}
                 className="aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover"
                 loading="lazy"

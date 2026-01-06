@@ -10,7 +10,11 @@
     "prisma:migrate:dev": "cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.development node -r dotenv/config node_modules/prisma/build/index.js migrate dev",
     "prisma:migrate:prod": "cross-env NODE_ENV=production DOTENV_CONFIG_PATH=.env.production node -r dotenv/config node_modules/prisma/build/index.js migrate deploy",
     "prisma:seed:dev": "cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.development node -r dotenv/config node_modules/prisma/build/index.js db seed",
-    "prisma:seed:prod": "cross-env NODE_ENV=production DOTENV_CONFIG_PATH=.env.production node -r dotenv/config node_modules/prisma/build/index.js db seed"
+    "prisma:seed:prod": "cross-env NODE_ENV=production DOTENV_CONFIG_PATH=.env.production node -r dotenv/config node_modules/prisma/build/index.js db seed",
+    "cards:sync-images:dev": "cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.development node -r dotenv/config scripts/sync-card-image-urls.cjs",
+    "cards:sync-images:prod": "cross-env NODE_ENV=production DOTENV_CONFIG_PATH=.env.production node -r dotenv/config scripts/sync-card-image-urls.cjs",
+    "cards:import:rws:dev": "cross-env NODE_ENV=development DOTENV_CONFIG_PATH=.env.development node -r dotenv/config scripts/import-rws-waite.cjs",
+    "cards:import:rws:prod": "cross-env NODE_ENV=production DOTENV_CONFIG_PATH=.env.production node -r dotenv/config scripts/import-rws-waite.cjs"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

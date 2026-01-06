@@ -2,6 +2,7 @@ import type { TarotCardDto } from "@shared/contracts/cards.contract";
 import type { ListTarotCardsParams } from "@/repositories/tarot-cards.repository";
 import { getTarotCardById, listTarotCards } from "@/repositories/tarot-cards.repository";
 import { ServiceError } from "@/lib/service-error";
+import { buildCardSvg, type CardSvgSize } from "@/lib/card-svg";
 
 export async function listCards(params: ListTarotCardsParams): Promise<TarotCardDto[]> {
   const cards = await listTarotCards(params);
@@ -14,6 +15,24 @@ export async function getCard(id: string): Promise<TarotCardDto> {
     throw new ServiceError({ message: "카드를 찾을 수 없습니다.", detail: { id } });
   }
   return mapTarotCardDto(card);
+}
+
+export async function getCardSvg(id: string, size: CardSvgSize): Promise<string> {
+  const card = await getTarotCardById(id);
+  if (!card) {
+    throw new ServiceError({ message: "카드를 찾을 수 없습니다.", detail: { id } });
+  }
+
+  return buildCardSvg(
+    {
+      nameKo: card.nameKo,
+      nameEn: card.nameEn,
+      arcana: card.arcana,
+      suit: card.suit,
+      rank: card.rank
+    },
+    size
+  );
 }
 
 function mapTarotCardDto(card: {

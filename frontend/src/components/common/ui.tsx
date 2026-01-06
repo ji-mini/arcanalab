@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export function Card(props: { title: string; description?: string; action?: ReactNode; children?: ReactNode }) {
   return (
-    <div className="rounded-xl border border-slate-200/10 bg-slate-950/30 p-5 shadow-[0_0_0_1px_rgba(99,102,241,0.06)] backdrop-blur">
+    <div className="rounded-xl border border-slate-200/10 bg-slate-950/25 p-5 shadow-[0_0_0_1px_rgba(245,158,11,0.08)] backdrop-blur">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-base font-semibold text-slate-50">{props.title}</div>
@@ -25,10 +25,10 @@ export function Button(props: {
   const variant = props.variant ?? "primary";
   const className =
     variant === "primary"
-      ? "bg-indigo-500/90 text-white hover:bg-indigo-400"
+      ? "bg-gradient-to-b from-amber-200/25 to-amber-500/10 text-amber-50 ring-1 ring-amber-200/20 hover:from-amber-200/35 hover:to-amber-500/15"
       : variant === "secondary"
-        ? "bg-slate-950/30 text-slate-50 ring-1 ring-slate-200/10 hover:bg-slate-950/50"
-        : "bg-transparent text-slate-200 hover:bg-slate-950/40";
+        ? "bg-slate-950/20 text-slate-50 ring-1 ring-amber-200/15 hover:bg-slate-950/35"
+        : "bg-transparent text-slate-200 hover:bg-slate-950/35";
 
   return (
     <button
@@ -37,7 +37,7 @@ export function Button(props: {
       disabled={props.disabled}
       className={[
         "inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium",
-        "shadow-sm shadow-indigo-500/10",
+        "shadow-sm shadow-amber-500/10",
         "disabled:cursor-not-allowed disabled:opacity-60",
         className
       ].join(" ")}
@@ -84,7 +84,7 @@ export function Select(props: {
 
 export function Badge(props: { children: ReactNode }) {
   return (
-    <span className="inline-flex rounded-full bg-indigo-500/10 px-2 py-1 text-xs text-indigo-100 ring-1 ring-indigo-400/15">
+    <span className="inline-flex rounded-full bg-amber-200/10 px-2 py-1 text-xs text-amber-100 ring-1 ring-amber-200/15">
       {props.children}
     </span>
   );

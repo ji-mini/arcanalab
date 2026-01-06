@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import type { CreateDrawRequest, CreateDrawResponse, DrawItemDto } from "@shared/contracts/draw.contract";
 import { apiPost } from "@/lib/api";
 import { Badge, Button, Card, Select } from "@/components/common/ui";
+import { getCardThumbnailSrc } from "@/lib/card-image";
 
 type CardCountValue = "1" | "2" | "3";
 
@@ -58,7 +59,7 @@ export function DrawPage() {
               <DrawCard key={it.id} item={it} />
             ))}
           </div>
-          <div className="mt-6 rounded-xl border border-slate-800 bg-slate-950 p-5">
+          <div className="mt-6 rounded-xl border border-slate-200/10 bg-slate-950/20 p-5 backdrop-blur">
             <div className="text-sm font-semibold text-slate-50">리딩</div>
             <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-200">{mutation.data.draw.readingText}</pre>
           </div>
@@ -74,7 +75,7 @@ function DrawCard(props: { item: DrawItemDto }) {
   return (
     <div className="rounded-xl border border-slate-200/10 bg-slate-950/20 p-4 backdrop-blur">
       <img
-        src={it.card.thumbnailUrl ?? "/card-back.svg"}
+        src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
         className="aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover"
       />

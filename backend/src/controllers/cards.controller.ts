@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 import type { ListTarotCardsResponse, GetTarotCardResponse } from "@shared/contracts/cards.contract";
-import { getCard, listCards } from "@/services/cards.service";
+import { getCard, getCardSvg, listCards } from "@/services/cards.service";
+import { ServiceError } from "@/lib/service-error";
 
 const listQuerySchema = z.object({
   query: z.string().optional(),
@@ -31,6 +32,38 @@ export async function getTarotCardController(req: Request, res: Response<GetTaro
   } catch (error) {
     const message = error instanceof Error ? error.message : "카드 조회에 실패했습니다.";
     return res.status(404).json({ message, detail: error });
+  }
+}
+
+export async function getTarotCardThumbnailSvgController(
+  req: Request,
+  res: Response
+): Promise<Response | void> {
+  try {
+    const id = req.params.id;
+    const svg = await getCardSvg(id, "thumb");
+    res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    return res.status(200).send(svg);
+  } catch (error) {
+    const status = error instanceof ServiceError ? 404 : 500;
+    return res.status(status).json({ message: "카드 썸네일 생성에 실패했습니다.", detail: error });
+  }
+}
+
+export async function getTarotCardImageSvgController(
+  req: Request,
+  res: Response
+): Promise<Response | void> {
+  try {
+    const id = req.params.id;
+    const svg = await getCardSvg(id, "full");
+    res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    return res.status(200).send(svg);
+  } catch (error) {
+    const status = error instanceof ServiceError ? 404 : 500;
+    return res.status(status).json({ message: "카드 이미지 생성에 실패했습니다.", detail: error });
   }
 }
 
