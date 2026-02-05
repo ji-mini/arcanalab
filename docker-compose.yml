@@ -12,7 +12,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: infra/nginx/Dockerfile
+      dockerfile: nginx/Dockerfile
     ports:
       - "80:80"
     depends_on:
