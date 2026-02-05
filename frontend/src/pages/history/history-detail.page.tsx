@@ -13,7 +13,7 @@ export function HistoryDetailPage() {
   const detailQuery = useQuery({
     queryKey: ["history", "detail", drawId],
     enabled: Boolean(drawId),
-    queryFn: () => apiGet<GetDrawDetailResponse>(`/api/history/${drawId}`)
+    queryFn: () => apiGet<GetDrawDetailResponse>(`/history/${drawId}`)
   });
 
   if (!drawId) {

@@ -44,7 +44,7 @@ ARCANA-LAB은 **단일 사용자(Local-first)** 타로 연구/기록 웹앱입�
 
 ## 실행/환경변수(Windows 호환)
 
-- 백엔드: `cross-env + dotenv/config + DOTENV_CONFIG_PATH` 조합으로 `.env.development`/`.env.production`을 로드합니다.
-- 프론트: Vite 규칙에 따라 `.env.*`를 로드합니다. (예: `VITE_API_BASE_URL`)
+- 백엔드: `dotenv/config`로 단일 `.env`를 로드합니다.
+- 프론트: Vite 규칙에 따라 `.env`를 로드합니다. (예: `VITE_API_BASE_URL=/api`)
 
 

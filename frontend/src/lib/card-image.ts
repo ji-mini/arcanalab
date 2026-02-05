@@ -1,5 +1,4 @@
 import type { TarotSuit, TarotCardDto } from "@shared/contracts/cards.contract";
-import { apiBaseUrl } from "@/lib/api";
 
 type CardLike = Pick<TarotCardDto, "id" | "nameKo" | "nameEn" | "arcana" | "suit" | "rank" | "imageUrl" | "thumbnailUrl">;
 
@@ -111,13 +110,11 @@ function getGeneratedCardSrc(card: CardLike, size: CardImageSize): string {
 }
 
 function resolveUrl(url: string): string {
-  // DB에는 "/api/..." 같은 상대경로가 저장될 수 있으므로, 프론트에서는 API base를 prefix 합니다.
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
     return url;
   }
-  if (url.startsWith("/")) {
-    return `${apiBaseUrl}${url}`;
-  }
+  // "/assets/..." 처럼 같은 오리진 기준 상대경로는 그대로 사용 (Nginx가 백엔드로 프록시)
+  if (url.startsWith("/")) return url;
   return url;
 }
 

@@ -1,7 +1,13 @@
-export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+const rawBase = import.meta.env.VITE_API_BASE_URL ?? "/api";
+export const apiBaseUrl = rawBase.endsWith("/") && rawBase !== "/" ? rawBase.slice(0, -1) : rawBase;
+
+function buildUrl(path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${apiBaseUrl}${normalizedPath}`;
+}
 
 export async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${apiBaseUrl}${path}`);
+  const res = await fetch(buildUrl(path));
   if (!res.ok) {
     throw await buildError(res);
   }
@@ -9,7 +15,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 }
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${apiBaseUrl}${path}`, {
+  const res = await fetch(buildUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)

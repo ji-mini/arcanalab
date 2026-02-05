@@ -10,11 +10,10 @@
 
 ### 환경변수
 
-- 백엔드: Windows 호환을 위해 `cross-env + dotenv/config + DOTENV_CONFIG_PATH` 조합으로 로드합니다.
-  - `npm run dev` → `.env.development`
-  - `npm run start` → `.env.production`
+- 백엔드: `dotenv/config`로 **단일 `.env`** 를 로드합니다.
+  - `npm run start` 실행 시 `backend/.env`
   - env 접근은 항상 `backend/src/config/env.ts`의 `getEnv()`를 사용합니다.
-- 프론트: Vite 규칙에 따라 `.env.development` / `.env.production` 을 사용하세요. (`VITE_API_BASE_URL`)
+- 프론트: Vite 규칙에 따라 `.env`를 로드합니다. (`VITE_API_BASE_URL=/api`)
 
 ### 카드 이미지(실제 파일) 사용
 
@@ -28,7 +27,7 @@
   - `/assets/cards/thumb/{slug}.webp`
   - `/assets/cards/full/{slug}.webp`
 - **DB URL 동기화**
-  - `cd backend && npm run cards:sync-images:dev`
+  - `cd backend && npm run cards:sync-images`
 
 ### 카드 이미지/의미 데이터 자동 채우기 (RWS + Waite)
 
@@ -39,6 +38,6 @@
 
 실행:
 
-- `cd backend && npm run cards:import:rws:dev`
+- `cd backend && npm run cards:import:rws`
 
 

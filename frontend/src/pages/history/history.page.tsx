@@ -22,12 +22,12 @@ export function HistoryPage() {
 
   const marksQuery = useQuery({
     queryKey: ["history", "marks", monthStart, monthEnd],
-    queryFn: () => apiGet<GetCalendarMarksResponse>(`/api/history/marks?start=${monthStart}&end=${monthEnd}`)
+    queryFn: () => apiGet<GetCalendarMarksResponse>(`/history/marks?start=${monthStart}&end=${monthEnd}`)
   });
 
   const dayQuery = useQuery({
     queryKey: ["history", "day", selectedDate],
-    queryFn: () => apiGet<GetDayDrawsResponse>(`/api/history/day/${selectedDate}`)
+    queryFn: () => apiGet<GetDayDrawsResponse>(`/history/day/${selectedDate}`)
   });
 
   const [rangeStart, setRangeStart] = useState(monthStart);
@@ -42,7 +42,7 @@ export function HistoryPage() {
 
   const rangeQuery = useQuery({
     queryKey: ["history", "list", rangeStart, rangeEnd, rangeCardCount],
-    queryFn: () => apiGet<ListDrawsResponse>(`/api/history${listQueryString}`)
+    queryFn: () => apiGet<ListDrawsResponse>(`/history${listQueryString}`)
   });
 
   const marksMap = useMemo(() => {

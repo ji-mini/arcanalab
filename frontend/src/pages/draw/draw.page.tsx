@@ -12,7 +12,7 @@ export function DrawPage() {
   const [cardCount, setCardCount] = useState<CardCountValue>("1");
 
   const mutation = useMutation({
-    mutationFn: (payload: CreateDrawRequest) => apiPost<CreateDrawResponse>("/api/draws", payload)
+    mutationFn: (payload: CreateDrawRequest) => apiPost<CreateDrawResponse>("/draws", payload)
   });
 
   const selectedCount = useMemo(() => (cardCount === "2" ? 2 : cardCount === "3" ? 3 : 1), [cardCount]);

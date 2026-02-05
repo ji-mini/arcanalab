@@ -9,7 +9,7 @@ import { getCardThumbnailSrc } from "@/lib/card-image";
 export function HomePage() {
   const recentQuery = useQuery({
     queryKey: ["history", "recent", 3],
-    queryFn: () => apiGet<GetRecentDrawsResponse>(`/api/history/recent?limit=3`)
+    queryFn: () => apiGet<GetRecentDrawsResponse>(`/history/recent?limit=3`)
   });
 
   return (

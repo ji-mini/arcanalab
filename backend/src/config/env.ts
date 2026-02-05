@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  PORT: z.coerce.number().int().positive().default(4000),
-  CORS_ORIGIN: z.string().default("http://localhost:5173"),
+  NODE_ENV: z.enum(["production", "test"]).default("production"),
+  PORT: z.coerce.number().int().positive().default(3001),
+  // Nginx가 같은 오리진으로 프록시하는 구성이므로 기본값은 localhost(80) 기준
+  CORS_ORIGIN: z.string().default("http://localhost"),
   DATABASE_URL: z.string().min(1),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().default("gpt-4o-mini"),

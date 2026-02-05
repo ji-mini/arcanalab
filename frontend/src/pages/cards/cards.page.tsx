@@ -27,7 +27,7 @@ export function CardsPage() {
 
   const cardsQuery = useQuery({
     queryKey: ["cards", { query, arcana, suit }],
-    queryFn: () => apiGet<ListTarotCardsResponse>(`/api/cards${queryString}`)
+    queryFn: () => apiGet<ListTarotCardsResponse>(`/cards${queryString}`)
   });
 
   return (

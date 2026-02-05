@@ -11,7 +11,7 @@ export function CardDetailPage() {
   const cardQuery = useQuery({
     queryKey: ["cards", "detail", id],
     enabled: Boolean(id),
-    queryFn: () => apiGet<GetTarotCardResponse>(`/api/cards/${id}`)
+    queryFn: () => apiGet<GetTarotCardResponse>(`/cards/${id}`)
   });
 
   if (!id) {
