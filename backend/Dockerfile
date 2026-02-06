@@ -13,13 +13,14 @@ RUN npm ci
 FROM node:20-alpine AS backend_build
 WORKDIR /app
 
-# backend 빌드에 필요한 소스 + shared d.ts 포함
+# backend 빌드에 필요한 소스 + shared 포함
 COPY backend ./backend
-COPY shared/dist ./shared/dist
+COPY shared ./shared
 
 COPY --from=backend_deps /app/backend/node_modules ./backend/node_modules
 
 WORKDIR /app/backend
+RUN ./node_modules/.bin/tsc -p ../shared/tsconfig.build.json
 RUN npm run prisma:generate
 RUN npm run build
 
