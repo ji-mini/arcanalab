@@ -33,11 +33,11 @@ ENV NODE_ENV=production
 COPY backend/package.json backend/package-lock.json ./
 COPY backend/prisma ./prisma
 
-# prod 이미지는 devDependencies 제외
 RUN npm ci --omit=dev
 
-# 생성된 Prisma Client/엔진 포함
-RUN npm run prisma:generate
+# ✅ build 단계에서 생성된 prisma client/engine 복사
+COPY --from=backend_build /app/backend/node_modules/.prisma ./node_modules/.prisma
+COPY --from=backend_build /app/backend/node_modules/@prisma ./node_modules/@prisma
 
 COPY --from=backend_build /app/backend/dist ./dist
 COPY backend/public ./public
