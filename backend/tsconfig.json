@@ -7,17 +7,19 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+
+    "rootDir": "src",
     "outDir": "dist",
-    "rootDir": ".",
+
     "types": ["node"],
     "noEmitOnError": true,
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@shared/*": ["../shared/dist/*"]
     }
   },
-  "include": ["src/**/*.ts", "prisma/**/*.ts"]
+  "include": ["src/**/*.ts"]
 }
-
 
