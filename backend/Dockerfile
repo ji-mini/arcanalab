@@ -36,8 +36,10 @@ RUN apt-get update \
 
 COPY backend/package.json backend/package-lock.json ./
 COPY backend/prisma ./prisma
+COPY backend/docker-entrypoint.sh ./docker-entrypoint.sh
 
 RUN npm ci --omit=dev
+RUN chmod +x ./docker-entrypoint.sh
 
 # ✅ build 단계에서 생성된 prisma client/engine 복사
 COPY --from=backend_build /app/backend/node_modules/.prisma ./node_modules/.prisma
@@ -47,4 +49,5 @@ COPY --from=backend_build /app/backend/dist ./dist
 COPY backend/public ./public
 
 EXPOSE 3001
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "dist/index.js"]

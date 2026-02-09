@@ -10,6 +10,13 @@ import type {
 import { ServiceError } from "@/lib/service-error";
 import { getCalendarMarks, getDayDraws, getDrawDetail, getRecent, listDraws } from "@/services/history.service";
 
+function serializeError(error: unknown): unknown {
+  if (error instanceof Error) {
+    return { name: error.name, message: error.message, stack: error.stack };
+  }
+  return error;
+}
+
 const recentQuerySchema = z.object({
   limit: z.coerce.number().int().positive().optional()
 });
@@ -37,7 +44,7 @@ export async function listRecentDrawsController(
     const result = await getRecent(parsed.data.limit);
     return res.json(result);
   } catch (error) {
-    return res.status(500).json({ message: "최근 기록 조회에 실패했습니다.", detail: error });
+    return res.status(500).json({ message: "최근 기록 조회에 실패했습니다.", detail: serializeError(error) });
   }
 }
 
@@ -53,7 +60,7 @@ export async function getCalendarMarksController(
     const result = await getCalendarMarks(parsed.data);
     return res.json(result);
   } catch (error) {
-    return res.status(500).json({ message: "달력 마킹 조회에 실패했습니다.", detail: error });
+    return res.status(500).json({ message: "달력 마킹 조회에 실패했습니다.", detail: serializeError(error) });
   }
 }
 
@@ -69,7 +76,7 @@ export async function getDayDrawsController(
     const result = await getDayDraws(date);
     return res.json(result);
   } catch (error) {
-    return res.status(500).json({ message: "일자 기록 조회에 실패했습니다.", detail: error });
+    return res.status(500).json({ message: "일자 기록 조회에 실패했습니다.", detail: serializeError(error) });
   }
 }
 
@@ -92,7 +99,7 @@ export async function listDrawsController(
     return res.json(result);
   } catch (error) {
     const status = error instanceof ServiceError ? 400 : 500;
-    return res.status(status).json({ message: "기록 목록 조회에 실패했습니다.", detail: error });
+    return res.status(status).json({ message: "기록 목록 조회에 실패했습니다.", detail: serializeError(error) });
   }
 }
 
@@ -107,7 +114,7 @@ export async function getDrawDetailController(
   } catch (error) {
     const status = error instanceof ServiceError ? 404 : 500;
     const message = error instanceof Error ? error.message : "기록 조회에 실패했습니다.";
-    return res.status(status).json({ message, detail: error });
+    return res.status(status).json({ message, detail: serializeError(error) });
   }
 }
 
