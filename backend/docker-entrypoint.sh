@@ -16,15 +16,18 @@ if [ "${filled}" -lt 78 ]; then
   # 네트워크/소스 오류가 있어도 서버 기동을 막지 않도록 백그라운드 실행
   # 로그는 컨테이너 stdout/stderr로 흘려보냅니다.
   lock="/tmp/import-rws-waite.lock"
+  # 컨테이너 재기동 후에는 이전 락이 남아있을 수 있으므로 stale lock은 제거합니다.
   if [ -f "${lock}" ]; then
-    echo "[backend] import already running; skip"
-  else
-    : > "${lock}"
-    (
-      node scripts/import-rws-waite.cjs
-      rm -f "${lock}"
-    ) 1>/proc/1/fd/1 2>/proc/1/fd/2 || true &
+    echo "[backend] stale import lock found; removing"
+    rm -f "${lock}"
   fi
+
+  : > "${lock}"
+  (
+    set +e
+    trap 'rm -f "${lock}"' EXIT
+    node scripts/import-rws-waite.cjs
+  ) 1>/proc/1/fd/1 2>/proc/1/fd/2 &
 fi
 
 exec "$@"
