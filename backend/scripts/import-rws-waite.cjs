@@ -47,12 +47,16 @@ function pad2(n) {
 function httpGetText(url) {
   return new Promise((resolve, reject) => {
     https
-      .get(url, { headers: { "User-Agent": "arcana-lab/0.0 (local research)" } }, (res) => {
+      .get(url, { headers: { "User-Agent": "arcana-lab/0.0 (ec2 import)" } }, (res) => {
         const chunks = [];
         res.on("data", (c) => chunks.push(c));
         res.on("end", () => {
           const buf = Buffer.concat(chunks);
-          resolve(buf.toString("utf-8"));
+          resolve({
+            statusCode: res.statusCode ?? 0,
+            headers: res.headers ?? {},
+            bodyText: buf.toString("utf-8")
+          });
         });
       })
       .on("error", reject);
@@ -60,8 +64,57 @@ function httpGetText(url) {
 }
 
 async function httpGetJson(url) {
-  const text = await httpGetText(url);
+  const res = await httpGetText(url);
+  const ct = String(res.headers?.["content-type"] ?? "");
+  const text = res.bodyText ?? "";
+
+  if (res.statusCode < 200 || res.statusCode >= 300) {
+    const head = text.slice(0, 200).replace(/\s+/g, " ");
+    throw new Error(`HTTP ${res.statusCode} (non-2xx) ct=${ct} bodyHead=${JSON.stringify(head)}`);
+  }
+
+  // Commons가 일시적으로 HTML 에러 페이지를 주는 경우가 있어 방어
+  if (!ct.includes("json") && text.trim().startsWith("<")) {
+    const head = text.slice(0, 200).replace(/\s+/g, " ");
+    throw new Error(`Non-JSON response ct=${ct} bodyHead=${JSON.stringify(head)}`);
+  }
+
   return JSON.parse(text);
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function httpGetJsonWithRetry(url, opts) {
+  const retries = opts?.retries ?? 6;
+  const baseDelayMs = opts?.baseDelayMs ?? 400;
+
+  let lastErr = null;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await httpGetJson(url);
+    } catch (e) {
+      lastErr = e;
+      const msg = String(e?.message ?? e);
+      const retryable =
+        msg.includes("HTTP 429") ||
+        msg.includes("HTTP 500") ||
+        msg.includes("HTTP 502") ||
+        msg.includes("HTTP 503") ||
+        msg.includes("HTTP 504") ||
+        msg.includes("Non-JSON response") ||
+        msg.includes("Unexpected token <");
+
+      if (!retryable || attempt === retries) break;
+
+      const delay = Math.min(8000, baseDelayMs * Math.pow(2, attempt));
+      console.warn(`[warn] retrying commons api (attempt ${attempt + 1}/${retries}) in ${delay}ms: ${msg}`);
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(delay);
+    }
+  }
+  throw lastErr;
 }
 
 function normalizeGutenbergText(text) {
@@ -98,7 +151,7 @@ async function fetchCommonsImageUrls(fileName, widths) {
       `${COMMONS_API}?action=query&format=json&origin=*` +
       `&titles=${encodeURIComponent(title)}` +
       `&prop=imageinfo&iiprop=url&iiurlwidth=${w}`;
-    const json = await httpGetJson(url);
+    const json = await httpGetJsonWithRetry(url, { retries: 6, baseDelayMs: 400 });
     const pages = json?.query?.pages ?? {};
     const page = Object.values(pages)[0];
     if (!page || page.missing) {
@@ -343,7 +396,6 @@ async function main() {
 
   console.log("[2/3] fetching image URLs from Wikimedia Commons...");
   const THUMB_W = 240;
-  const FULL_W = 720;
   let imageOk = 0;
   let imageMissing = 0;
   const imageMissingFiles = [];
@@ -352,7 +404,8 @@ async function main() {
 
   for (const c of cards) {
     const fileName = commonsFileTitle(c);
-    const img = await fetchCommonsImageUrls(fileName, [THUMB_W, FULL_W]);
+    // API 호출 수를 줄이기 위해 thumb 1회만 요청하고, full은 original URL을 사용합니다.
+    const img = await fetchCommonsImageUrls(fileName, [THUMB_W]);
     if (!img.ok) {
       imageMissing += 1;
       imageMissingFiles.push(fileName);
@@ -363,7 +416,7 @@ async function main() {
     const meanings = meaningMap.get(c.id);
     const data = {
       thumbnailUrl: img.urls[THUMB_W],
-      imageUrl: img.urls[FULL_W]
+      imageUrl: img.urls.original
     };
 
     if (meanings) {
@@ -379,6 +432,10 @@ async function main() {
         data
       })
     );
+
+    // Wikimedia API에 부담을 줄이기 위해 소량 딜레이(레이트 리밋/HTML 에러 방지)
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(80);
   }
 
   console.log(`[2/3] images ok=${imageOk} missing=${imageMissing}`);
