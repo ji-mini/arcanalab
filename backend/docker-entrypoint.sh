@@ -5,7 +5,7 @@ echo "[backend] prisma migrate deploy"
 ./node_modules/.bin/prisma migrate deploy
 
 echo "[backend] seed (if empty)"
-node dist/prisma/seed.js
+node scripts/seed-base-cards.cjs
 
 meaningFilled="$(node scripts/check-cards-filled.cjs meaningFilled 2>/dev/null || echo 0)"
 echo "[backend] meanings filled: ${meaningFilled}/78"
