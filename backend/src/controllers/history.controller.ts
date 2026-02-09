@@ -44,6 +44,8 @@ export async function listRecentDrawsController(
     const result = await getRecent(parsed.data.limit);
     return res.json(result);
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("[history] recent failed", serializeError(error));
     return res.status(500).json({ message: "최근 기록 조회에 실패했습니다.", detail: serializeError(error) });
   }
 }
