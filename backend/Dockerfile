@@ -1,4 +1,7 @@
 FROM node:20-bookworm-slim AS backend_deps
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /app/backend
 
 # 의존성 캐시를 위해 package 파일만 먼저 복사
@@ -11,6 +14,9 @@ RUN npm ci
 
 
 FROM node:20-bookworm-slim AS backend_build
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # backend 빌드에 필요한 소스 + shared 포함
