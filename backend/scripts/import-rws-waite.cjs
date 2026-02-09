@@ -381,7 +381,10 @@ async function main() {
       arcana: true,
       suit: true,
       rank: true,
-      sortKey: true
+      sortKey: true,
+      thumbnailUrl: true,
+      imageUrl: true,
+      uprightPoints: true
     }
   });
 
@@ -389,23 +392,68 @@ async function main() {
     console.warn(`[warn] expected 78 cards, got ${cards.length}`);
   }
 
-  console.log("[1/3] fetching waite meanings from Project Gutenberg (pg43548.txt)...");
-  const bookText = await httpGetText(GUTENBERG_TEXT_URL);
+  console.log("[1/4] fetching waite meanings from Project Gutenberg (pg43548.txt)...");
+  const bookRes = await httpGetText(GUTENBERG_TEXT_URL);
+  const bookText = bookRes.bodyText ?? "";
   const meaningMap = extractCardMeaningMapFromGutenberg(bookText, cards);
-  console.log(`[1/3] meanings extracted: ${meaningMap.size} items`);
+  console.log(`[1/4] meanings extracted: ${meaningMap.size} items`);
 
-  console.log("[2/3] fetching image URLs from Wikimedia Commons...");
+  console.log("[2/4] writing meanings to DB...");
+  const meaningUpdates = [];
+  for (const c of cards) {
+    const meanings = meaningMap.get(c.id);
+    if (!meanings) continue;
+    // 이미 의미가 채워진 경우(수동 편집 등) 덮어쓰지 않습니다.
+    if (c.uprightPoints && c.uprightPoints !== "데이터 준비 중") continue;
+    meaningUpdates.push(
+      prisma.tarotCard.update({
+        where: { id: c.id },
+        data: {
+          description: meanings.upright,
+          uprightPoints: meanings.upright,
+          reversedPoints: meanings.reversed || "—",
+          keywords: meanings.keywords
+        }
+      })
+    );
+  }
+
+  if (meaningUpdates.length > 0) {
+    const chunkSize = 25;
+    for (let i = 0; i < meaningUpdates.length; i += chunkSize) {
+      // eslint-disable-next-line no-await-in-loop
+      await prisma.$transaction(meaningUpdates.slice(i, i + chunkSize));
+    }
+  }
+  console.log(`[2/4] meanings updated: ${meaningUpdates.length}`);
+
+  console.log("[3/4] fetching image URLs from Wikimedia Commons...");
   const THUMB_W = 240;
   let imageOk = 0;
   let imageMissing = 0;
+  let imageError = 0;
   const imageMissingFiles = [];
 
-  const updates = [];
+  const imageUpdates = [];
 
   for (const c of cards) {
+    // 이미 이미지가 채워져 있으면 Commons 호출 자체를 생략합니다.
+    // (null 이거나 svg fallback("/api/...")인 경우에만 채웁니다.)
+    const needsThumb = !c.thumbnailUrl || String(c.thumbnailUrl).startsWith("/api/");
+    const needsFull = !c.imageUrl || String(c.imageUrl).startsWith("/api/");
+    if (!needsThumb && !needsFull) continue;
+
     const fileName = commonsFileTitle(c);
-    // API 호출 수를 줄이기 위해 thumb 1회만 요청하고, full은 original URL을 사용합니다.
-    const img = await fetchCommonsImageUrls(fileName, [THUMB_W]);
+    let img;
+    try {
+      // API 호출 수를 줄이기 위해 thumb 1회만 요청하고, full은 original URL을 사용합니다.
+      // eslint-disable-next-line no-await-in-loop
+      img = await fetchCommonsImageUrls(fileName, [THUMB_W]);
+    } catch (e) {
+      imageError += 1;
+      console.warn(`[warn] commons api error for ${fileName}: ${String(e?.message ?? e)}`);
+      continue;
+    }
     if (!img.ok) {
       imageMissing += 1;
       imageMissingFiles.push(fileName);
@@ -413,20 +461,14 @@ async function main() {
     }
     imageOk += 1;
 
-    const meanings = meaningMap.get(c.id);
-    const data = {
-      thumbnailUrl: img.urls[THUMB_W],
-      imageUrl: img.urls.original
-    };
+    const data = {};
+    // 기존이 비어있거나(svg fallback)인 경우에만 덮어씁니다.
+    if (needsThumb) data.thumbnailUrl = img.urls[THUMB_W];
+    if (needsFull) data.imageUrl = img.urls.original;
 
-    if (meanings) {
-      data.description = meanings.upright; // 기반 설명(원문) — UI에서 줄바꿈 처리
-      data.uprightPoints = meanings.upright;
-      data.reversedPoints = meanings.reversed || "—";
-      data.keywords = meanings.keywords;
-    }
+    if (Object.keys(data).length === 0) continue;
 
-    updates.push(
+    imageUpdates.push(
       prisma.tarotCard.update({
         where: { id: c.id },
         data
@@ -438,18 +480,18 @@ async function main() {
     await sleep(80);
   }
 
-  console.log(`[2/3] images ok=${imageOk} missing=${imageMissing}`);
+  console.log(`[3/4] images ok=${imageOk} missing=${imageMissing} error=${imageError}`);
   if (imageMissingFiles.length > 0) {
-    console.log(`[2/3] missing files (first 10): ${imageMissingFiles.slice(0, 10).join(", ")}`);
+    console.log(`[3/4] missing files (first 10): ${imageMissingFiles.slice(0, 10).join(", ")}`);
   }
 
-  console.log("[3/3] writing to DB...");
-  if (updates.length > 0) {
+  console.log("[4/4] writing image URLs to DB...");
+  if (imageUpdates.length > 0) {
     // transaction chunking to avoid very large transactions on some setups
     const chunkSize = 25;
-    for (let i = 0; i < updates.length; i += chunkSize) {
+    for (let i = 0; i < imageUpdates.length; i += chunkSize) {
       // eslint-disable-next-line no-await-in-loop
-      await prisma.$transaction(updates.slice(i, i + chunkSize));
+      await prisma.$transaction(imageUpdates.slice(i, i + chunkSize));
     }
   }
 
@@ -463,7 +505,13 @@ async function main() {
     }
   });
 
-  console.log(JSON.stringify({ total: cards.length, updated: updates.length, filled }, null, 2));
+  console.log(
+    JSON.stringify(
+      { total: cards.length, meaningUpdated: meaningUpdates.length, imageUpdated: imageUpdates.length, filled },
+      null,
+      2
+    )
+  );
 }
 
 main()
