@@ -148,7 +148,10 @@ export function HistoryPage() {
                         key={it.id}
                         src={getCardThumbnailSrc(it.card)}
                         alt={it.card.nameKo}
-                        className="h-10 w-7 rounded border border-slate-200/10 object-cover"
+                        className={[
+                          "h-10 w-7 rounded border border-slate-200/10 object-cover",
+                          it.orientation === "REVERSED" ? "rotate-180" : ""
+                        ].join(" ")}
                         loading="lazy"
                       />
                     ))}
@@ -223,7 +226,10 @@ export function HistoryPage() {
                         key={it.id}
                         src={getCardThumbnailSrc(it.card)}
                         alt={it.card.nameKo}
-                        className="h-10 w-7 rounded border border-slate-200/10 object-cover"
+                        className={[
+                          "h-10 w-7 rounded border border-slate-200/10 object-cover",
+                          it.orientation === "REVERSED" ? "rotate-180" : ""
+                        ].join(" ")}
                         loading="lazy"
                       />
                     ))}

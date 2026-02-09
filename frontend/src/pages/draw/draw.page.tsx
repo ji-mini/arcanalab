@@ -72,12 +72,16 @@ export function DrawPage() {
 function DrawCard(props: { item: DrawItemDto }) {
   const it = props.item;
   const directionKo = it.orientation === "UPRIGHT" ? "정방향" : "역방향";
+  const isReversed = it.orientation === "REVERSED";
   return (
     <div className="rounded-xl border border-slate-200/10 bg-slate-950/20 p-4 backdrop-blur">
       <img
         src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
-        className="aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover"
+        className={[
+          "aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover",
+          isReversed ? "rotate-180" : ""
+        ].join(" ")}
       />
       <div className="mt-3 text-sm font-semibold text-slate-50">
         {it.position}. {it.card.nameKo}

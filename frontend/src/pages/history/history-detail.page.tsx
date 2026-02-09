@@ -74,12 +74,16 @@ function DetailContent(props: { data: GetDrawDetailResponse }) {
 function HistoryCardItem(props: { item: DrawItemDto }) {
   const it = props.item;
   const directionKo = it.orientation === "UPRIGHT" ? "정방향" : "역방향";
+  const isReversed = it.orientation === "REVERSED";
   return (
     <div className="flex items-center gap-3 rounded-lg border border-slate-200/10 bg-slate-950/20 px-3 py-3 backdrop-blur">
       <img
         src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
-        className="h-14 w-10 rounded border border-slate-200/10 object-cover"
+        className={[
+          "h-14 w-10 rounded border border-slate-200/10 object-cover",
+          isReversed ? "rotate-180" : ""
+        ].join(" ")}
       />
       <div className="min-w-0">
         <div className="text-sm font-semibold text-slate-50">
