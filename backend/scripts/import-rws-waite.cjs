@@ -427,6 +427,123 @@ async function main() {
   }
   console.log(`[2/4] meanings updated: ${meaningUpdates.length}`);
 
+  // 선택: 의미 텍스트가 영어인 경우, OpenAI로 한글 번역하여 DB에 저장합니다.
+  // 카드 설명 보기 화면은 OpenAI를 호출하지 않고 DB만 읽으므로, 여기서 "1회 변환"을 수행합니다.
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+  const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+
+  function looksEnglish(s) {
+    const t = String(s || "");
+    if (!t) return false;
+    const hasHangul = /[가-힣]/.test(t);
+    const hasLatin = /[A-Za-z]/.test(t);
+    return hasLatin && !hasHangul;
+  }
+
+  async function openAiTranslateToKo(payload) {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        temperature: 0,
+        top_p: 1,
+        messages: [
+          {
+            role: "system",
+            content: [
+              "You translate tarot card meanings into natural Korean.",
+              "Return ONLY valid JSON. No extra text.",
+              "Keep it readable and concise, but not overly short.",
+              "Do not invent facts beyond the given English text."
+            ].join("\n")
+          },
+          {
+            role: "user",
+            content: JSON.stringify(payload)
+          }
+        ]
+      })
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`OpenAI translate failed: ${res.status} ${text}`);
+    }
+
+    const json = await res.json();
+    const content = json?.choices?.[0]?.message?.content ?? "";
+    return JSON.parse(content);
+  }
+
+  // 번역 대상은 DB에서 다시 조회(meaningUpdates로 변경된 값 반영)
+  if (OPENAI_API_KEY) {
+    console.log("[2.5/4] translating meanings to Korean via OpenAI (only when English)...");
+    const cardsForTranslate = await prisma.tarotCard.findMany({
+      orderBy: [{ sortKey: "asc" }],
+      select: {
+        id: true,
+        nameEn: true,
+        nameKo: true,
+        keywords: true,
+        description: true,
+        uprightPoints: true,
+        reversedPoints: true
+      }
+    });
+
+    let translated = 0;
+    for (const c of cardsForTranslate) {
+      if (!looksEnglish(c.uprightPoints) && !looksEnglish(c.description) && !looksEnglish(c.reversedPoints)) continue;
+
+      const payload = {
+        card: { id: c.id, nameKo: c.nameKo, nameEn: c.nameEn },
+        keywordsEn: c.keywords ?? [],
+        descriptionEn: c.description,
+        uprightPointsEn: c.uprightPoints,
+        reversedPointsEn: c.reversedPoints
+      };
+
+      let out;
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        out = await openAiTranslateToKo(payload);
+      } catch (e) {
+        console.warn(`[warn] translate failed for ${c.nameEn}: ${String(e?.message ?? e)}`);
+        // eslint-disable-next-line no-await-in-loop
+        await sleep(500);
+        continue;
+      }
+
+      const nextKeywords = Array.isArray(out.keywordsKo) ? out.keywordsKo : Array.isArray(out.keywords) ? out.keywords : [];
+      const nextDescription = out.descriptionKo || out.description || c.description;
+      const nextUpright = out.uprightPointsKo || out.uprightPoints || c.uprightPoints;
+      const nextReversed = out.reversedPointsKo || out.reversedPoints || c.reversedPoints;
+
+      // eslint-disable-next-line no-await-in-loop
+      await prisma.tarotCard.update({
+        where: { id: c.id },
+        data: {
+          keywords: nextKeywords.map((x) => String(x).trim()).filter(Boolean).slice(0, 12),
+          description: String(nextDescription),
+          uprightPoints: String(nextUpright),
+          reversedPoints: String(nextReversed)
+        }
+      });
+      translated += 1;
+
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(350);
+    }
+
+    console.log(`[2.5/4] translated: ${translated}`);
+  } else {
+    console.log("[2.5/4] OpenAI key not set; skip Korean translation");
+  }
+
   console.log("[3/4] fetching image URLs from Wikimedia Commons...");
   const THUMB_W = 240;
   let imageOk = 0;

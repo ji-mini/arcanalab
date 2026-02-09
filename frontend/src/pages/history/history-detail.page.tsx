@@ -81,7 +81,7 @@ function HistoryCardItem(props: { item: DrawItemDto }) {
         src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
         className={[
-          "h-14 w-10 rounded border border-slate-200/10 object-cover",
+          "h-14 w-10 rounded border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
       />

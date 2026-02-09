@@ -79,7 +79,7 @@ function DrawCard(props: { item: DrawItemDto }) {
         src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
         className={[
-          "aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover",
+          "aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
       />
