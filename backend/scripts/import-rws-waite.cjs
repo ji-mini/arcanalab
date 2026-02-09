@@ -176,6 +176,11 @@ function splitReversed(text) {
   return { upright, reversed };
 }
 
+function nonEmptyOrFallback(value, fallback) {
+  const t = String(value ?? "").trim();
+  return t ? t : fallback;
+}
+
 function buildKeywords(upright) {
   const parts = upright
     .split(/[;,]/g)
@@ -409,9 +414,9 @@ async function main() {
       prisma.tarotCard.update({
         where: { id: c.id },
         data: {
-          description: meanings.upright,
-          uprightPoints: meanings.upright,
-          reversedPoints: meanings.reversed || "—",
+          description: nonEmptyOrFallback(meanings.upright, "데이터 준비 중"),
+          uprightPoints: nonEmptyOrFallback(meanings.upright, "데이터 준비 중"),
+          reversedPoints: nonEmptyOrFallback(meanings.reversed, "—"),
           keywords: meanings.keywords
         }
       })
@@ -441,6 +446,12 @@ async function main() {
   }
 
   async function openAiTranslateToKo(payload) {
+    const schemaHint = {
+      keywordsKo: ["키워드1", "키워드2"],
+      descriptionKo: "기본 설명(자연스러운 한글)",
+      uprightPointsKo: "정방향 포인트(자연스러운 한글)",
+      reversedPointsKo: "역방향 포인트(자연스러운 한글)"
+    };
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -458,7 +469,8 @@ async function main() {
               "You translate tarot card meanings into natural Korean.",
               "Return ONLY valid JSON. No extra text.",
               "Keep it readable and concise, but not overly short.",
-              "Do not invent facts beyond the given English text."
+              "Do not invent facts beyond the given English text.",
+              `Output JSON schema example: ${JSON.stringify(schemaHint)}`
             ].join("\n")
           },
           {
@@ -476,11 +488,17 @@ async function main() {
 
     const json = await res.json();
     const content = json?.choices?.[0]?.message?.content ?? "";
-    return JSON.parse(content);
+    try {
+      return JSON.parse(content);
+    } catch {
+      throw new Error(`OpenAI returned non-JSON: ${content.slice(0, 200)}`);
+    }
   }
 
-  // 번역 대상은 DB에서 다시 조회(meaningUpdates로 변경된 값 반영)
-  if (OPENAI_API_KEY) {
+  // 번역은 비용이 드는 작업이므로 기본적으로는 수행하지 않습니다.
+  // 필요 시 별도 스크립트(`scripts/translate-cards-ko.cjs`)를 실행하세요.
+  // (또는 TRANSLATE_CARDS_KO=1 로 이 단계 활성화)
+  if (OPENAI_API_KEY && process.env.TRANSLATE_CARDS_KO === "1") {
     console.log("[2.5/4] translating meanings to Korean via OpenAI (only when English)...");
     const cardsForTranslate = await prisma.tarotCard.findMany({
       orderBy: [{ sortKey: "asc" }],
@@ -541,7 +559,7 @@ async function main() {
 
     console.log(`[2.5/4] translated: ${translated}`);
   } else {
-    console.log("[2.5/4] OpenAI key not set; skip Korean translation");
+    console.log("[2.5/4] skip Korean translation (set TRANSLATE_CARDS_KO=1 to enable)");
   }
 
   console.log("[3/4] fetching image URLs from Wikimedia Commons...");
