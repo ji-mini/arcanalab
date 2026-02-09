@@ -37,6 +37,7 @@ RUN apt-get update \
 COPY backend/package.json backend/package-lock.json ./
 COPY backend/prisma ./prisma
 COPY backend/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY backend/scripts ./scripts
 
 RUN npm ci --omit=dev
 RUN chmod +x ./docker-entrypoint.sh
