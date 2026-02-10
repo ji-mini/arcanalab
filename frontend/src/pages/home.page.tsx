@@ -111,7 +111,9 @@ export function HomePage() {
                           alt={it.card.nameKo}
                           className={[
                             "h-10 w-7 rounded border object-cover origin-center transform-gpu transition-transform duration-200",
-                            it.card.arcana === "MAJOR" ? "border-amber-200/45" : "border-slate-200/10",
+                            it.card.arcana === "MAJOR"
+                              ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_16px_rgba(251,191,36,0.16)]"
+                              : "border border-slate-200/10",
                             it.orientation === "REVERSED" ? "rotate-180" : ""
                           ].join(" ")}
                           loading="lazy"

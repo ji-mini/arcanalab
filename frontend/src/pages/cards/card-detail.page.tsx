@@ -57,7 +57,9 @@ function CardDetailContent(props: { data: GetTarotCardResponse }) {
             alt={c.nameKo}
             className={[
               "w-full rounded-xl border object-cover",
-              c.arcana === "MAJOR" ? "border-amber-200/45" : "border-slate-200/10"
+              c.arcana === "MAJOR"
+                ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_28px_rgba(251,191,36,0.18)]"
+                : "border border-slate-200/10"
             ].join(" ")}
           />
           <div className="mt-3 flex flex-wrap gap-2">

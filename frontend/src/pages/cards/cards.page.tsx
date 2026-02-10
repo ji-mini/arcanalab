@@ -81,7 +81,9 @@ export function CardsPage() {
                 alt={c.nameKo}
                 className={[
                   "aspect-[3/5] w-full rounded-md border object-cover",
-                  c.arcana === "MAJOR" ? "border-amber-200/45" : "border-slate-200/10"
+                  c.arcana === "MAJOR"
+                    ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_24px_rgba(251,191,36,0.18)]"
+                    : "border border-slate-200/10"
                 ].join(" ")}
                 loading="lazy"
               />

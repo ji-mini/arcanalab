@@ -83,7 +83,9 @@ function HistoryCardItem(props: { item: DrawItemDto }) {
         alt={it.card.nameKo}
         className={[
           "h-14 w-10 rounded border object-cover origin-center transform-gpu transition-transform duration-200",
-          isMajor ? "border-amber-200/45" : "border-slate-200/10",
+          isMajor
+            ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_18px_rgba(251,191,36,0.16)]"
+            : "border border-slate-200/10",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
       />

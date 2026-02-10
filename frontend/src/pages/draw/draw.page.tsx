@@ -29,6 +29,48 @@ function MysticalLoadingLabel() {
   );
 }
 
+function MysticalCenterSpinner(props: { open: boolean }) {
+  if (!props.open) return null;
+  return (
+    <div
+      className={[
+        "fixed inset-0 z-50 flex items-center justify-center",
+        "bg-slate-950/55 backdrop-blur-sm"
+      ].join(" ")}
+      role="status"
+      aria-live="polite"
+      aria-label="카드를 뽑는 중"
+    >
+      <div className="relative">
+        {/* glow backdrop */}
+        <div className="pointer-events-none absolute -inset-10 rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.18),transparent_60%)] blur-2xl" />
+        <div className="pointer-events-none absolute -inset-10 rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.16),transparent_60%)] blur-2xl" />
+
+        <div className="relative grid place-items-center rounded-2xl border border-amber-200/15 bg-slate-950/40 px-10 py-9 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+          {/* spinner ring */}
+          <div className="relative grid place-items-center">
+            <div className="h-20 w-20 rounded-full border-2 border-amber-200/20" />
+            <div className="absolute h-20 w-20 rounded-full border-2 border-transparent border-t-amber-200/90 border-r-violet-200/60 animate-spin [animation-duration:1.15s]" />
+            <div className="absolute text-amber-200/95 text-2xl animate-pulse">✶</div>
+          </div>
+
+          <div className="mt-5 text-sm font-semibold text-slate-50">
+            흐름을 읽는 중
+            <span aria-hidden className="ml-1 inline-flex items-end gap-0.5">
+              <span className="inline-block animate-bounce [animation-delay:0ms]">.</span>
+              <span className="inline-block animate-bounce [animation-delay:160ms]">.</span>
+              <span className="inline-block animate-bounce [animation-delay:320ms]">.</span>
+            </span>
+          </div>
+          <div className="mt-1 text-xs text-slate-300">
+            잠시만요. 오늘의 카드가 정렬되고 있어요.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function DrawPage() {
   const [cardCount, setCardCount] = useState<CardCountValue>("1");
 
@@ -40,6 +82,7 @@ export function DrawPage() {
 
   return (
     <div className="space-y-6">
+      <MysticalCenterSpinner open={mutation.isPending} />
       <Card title="오늘의 카드 뽑기" description="1~3장을 선택하고, 기록 가능한 리딩을 생성합니다.">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
@@ -102,7 +145,9 @@ function DrawCard(props: { item: DrawItemDto }) {
         alt={it.card.nameKo}
         className={[
           "aspect-[3/5] w-full rounded-md border object-cover origin-center transform-gpu transition-transform duration-200",
-          isMajor ? "border-amber-200/45" : "border-slate-200/10",
+          isMajor
+            ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_24px_rgba(251,191,36,0.18)]"
+            : "border border-slate-200/10",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
       />
