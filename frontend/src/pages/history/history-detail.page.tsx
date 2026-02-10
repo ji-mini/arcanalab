@@ -75,13 +75,15 @@ function HistoryCardItem(props: { item: DrawItemDto }) {
   const it = props.item;
   const directionKo = it.orientation === "UPRIGHT" ? "정방향" : "역방향";
   const isReversed = it.orientation === "REVERSED";
+  const isMajor = it.card.arcana === "MAJOR";
   return (
     <div className="flex items-center gap-3 rounded-lg border border-slate-200/10 bg-slate-950/20 px-3 py-3 backdrop-blur">
       <img
         src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
         className={[
-          "h-14 w-10 rounded border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
+          "h-14 w-10 rounded border object-cover origin-center transform-gpu transition-transform duration-200",
+          isMajor ? "border-amber-200/45" : "border-slate-200/10",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
       />

@@ -94,13 +94,15 @@ function DrawCard(props: { item: DrawItemDto }) {
   const it = props.item;
   const directionKo = it.orientation === "UPRIGHT" ? "정방향" : "역방향";
   const isReversed = it.orientation === "REVERSED";
+  const isMajor = it.card.arcana === "MAJOR";
   return (
     <div className="rounded-xl border border-slate-200/10 bg-slate-950/20 p-4 backdrop-blur">
       <img
         src={getCardThumbnailSrc(it.card)}
         alt={it.card.nameKo}
         className={[
-          "aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
+          "aspect-[3/5] w-full rounded-md border object-cover origin-center transform-gpu transition-transform duration-200",
+          isMajor ? "border-amber-200/45" : "border-slate-200/10",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
       />

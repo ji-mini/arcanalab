@@ -79,7 +79,10 @@ export function CardsPage() {
               <img
                 src={getCardThumbnailSrc(c)}
                 alt={c.nameKo}
-                className="aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover"
+                className={[
+                  "aspect-[3/5] w-full rounded-md border object-cover",
+                  c.arcana === "MAJOR" ? "border-amber-200/45" : "border-slate-200/10"
+                ].join(" ")}
                 loading="lazy"
               />
               <div className="mt-2 truncate text-sm font-medium text-slate-100">{c.nameKo}</div>

@@ -55,7 +55,10 @@ function CardDetailContent(props: { data: GetTarotCardResponse }) {
           <img
             src={getCardFullSrc(c)}
             alt={c.nameKo}
-            className="w-full rounded-xl border border-slate-200/10 object-cover"
+            className={[
+              "w-full rounded-xl border object-cover",
+              c.arcana === "MAJOR" ? "border-amber-200/45" : "border-slate-200/10"
+            ].join(" ")}
           />
           <div className="mt-3 flex flex-wrap gap-2">
             <Badge>{c.arcana === "MAJOR" ? "메이저" : "마이너"}</Badge>
