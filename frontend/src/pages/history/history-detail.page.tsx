@@ -60,7 +60,9 @@ function DetailContent(props: { data: GetDrawDetailResponse }) {
         </div>
         <div className="md:col-span-2">
           <div className="text-sm font-semibold text-slate-50">리딩 본문</div>
-          <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-200">{d.readingText}</pre>
+          <pre className="mt-3 whitespace-pre-wrap font-sans text-[15px] leading-7 tracking-[-0.01em] text-slate-200">
+            {d.readingText}
+          </pre>
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge>prompt v{d.promptVersion}</Badge>
             {d.model ? <Badge>{d.model}</Badge> : <Badge>model: (disabled)</Badge>}
@@ -78,17 +80,43 @@ function HistoryCardItem(props: { item: DrawItemDto }) {
   const isMajor = it.card.arcana === "MAJOR";
   return (
     <div className="flex items-center gap-3 rounded-lg border border-slate-200/10 bg-slate-950/20 px-3 py-3 backdrop-blur">
-      <img
-        src={getCardThumbnailSrc(it.card)}
-        alt={it.card.nameKo}
-        className={[
-          "h-14 w-10 rounded border object-cover origin-center transform-gpu transition-transform duration-200",
-          isMajor
-            ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_18px_rgba(251,191,36,0.16)]"
-            : "border border-slate-200/10",
-          isReversed ? "rotate-180" : ""
-        ].join(" ")}
-      />
+      {isMajor ? (
+        <div
+          className={[
+            "relative rounded p-[4px]",
+            "bg-gradient-to-br from-amber-200 via-yellow-400 to-amber-200",
+            "shadow-[0_0_0_1px_rgba(255,215,0,0.50),0_0_18px_rgba(251,191,36,0.16)]"
+          ].join(" ")}
+        >
+          <div
+            aria-hidden
+            className={[
+              "pointer-events-none absolute inset-0 rounded opacity-70 mix-blend-overlay",
+              "bg-[conic-gradient(from_180deg,rgba(255,255,255,0),rgba(255,255,255,0.42),rgba(255,255,255,0))]",
+              "animate-spin [animation-duration:3.4s]"
+            ].join(" ")}
+          />
+          <div className="relative overflow-hidden rounded-[6px]">
+            <img
+              src={getCardThumbnailSrc(it.card)}
+              alt={it.card.nameKo}
+              className={[
+                "h-14 w-10 object-cover origin-center transform-gpu transition-transform duration-200",
+                isReversed ? "rotate-180" : ""
+              ].join(" ")}
+            />
+          </div>
+        </div>
+      ) : (
+        <img
+          src={getCardThumbnailSrc(it.card)}
+          alt={it.card.nameKo}
+          className={[
+            "h-14 w-10 rounded border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
+            isReversed ? "rotate-180" : ""
+          ].join(" ")}
+        />
+      )}
       <div className="min-w-0">
         <div className="text-sm font-semibold text-slate-50">
           {it.position}. {it.card.nameKo}

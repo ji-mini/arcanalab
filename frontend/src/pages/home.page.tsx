@@ -105,19 +105,47 @@ export function HomePage() {
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
                       {d.items.slice(0, 3).map((it) => (
-                        <img
-                          key={it.id}
-                          src={getCardThumbnailSrc(it.card)}
-                          alt={it.card.nameKo}
-                          className={[
-                            "h-10 w-7 rounded border object-cover origin-center transform-gpu transition-transform duration-200",
-                            it.card.arcana === "MAJOR"
-                              ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_16px_rgba(251,191,36,0.16)]"
-                              : "border border-slate-200/10",
-                            it.orientation === "REVERSED" ? "rotate-180" : ""
-                          ].join(" ")}
-                          loading="lazy"
-                        />
+                        it.card.arcana === "MAJOR" ? (
+                          <div
+                            key={it.id}
+                            className={[
+                              "relative rounded p-[3px]",
+                              "bg-gradient-to-br from-amber-200 via-yellow-400 to-amber-200",
+                              "shadow-[0_0_0_1px_rgba(255,215,0,0.50),0_0_16px_rgba(251,191,36,0.16)]"
+                            ].join(" ")}
+                          >
+                            <div
+                              aria-hidden
+                              className={[
+                                "pointer-events-none absolute inset-0 rounded opacity-70 mix-blend-overlay",
+                                "bg-[conic-gradient(from_180deg,rgba(255,255,255,0),rgba(255,255,255,0.42),rgba(255,255,255,0))]",
+                                "animate-spin [animation-duration:3.4s]"
+                              ].join(" ")}
+                            />
+                            <div className="relative overflow-hidden rounded-[5px]">
+                              <img
+                                src={getCardThumbnailSrc(it.card)}
+                                alt={it.card.nameKo}
+                                className={[
+                                  "h-10 w-7 object-cover origin-center transform-gpu transition-transform duration-200",
+                                  it.orientation === "REVERSED" ? "rotate-180" : ""
+                                ].join(" ")}
+                                loading="lazy"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            key={it.id}
+                            src={getCardThumbnailSrc(it.card)}
+                            alt={it.card.nameKo}
+                            className={[
+                              "h-10 w-7 rounded border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
+                              it.orientation === "REVERSED" ? "rotate-180" : ""
+                            ].join(" ")}
+                            loading="lazy"
+                          />
+                        )
                       ))}
                     </div>
                   </Link>

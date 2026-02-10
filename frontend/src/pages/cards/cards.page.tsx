@@ -76,17 +76,39 @@ export function CardsPage() {
               to={`/cards/${c.id}`}
               className="rounded-xl border border-slate-200/10 bg-slate-950/15 p-3 backdrop-blur hover:border-amber-200/25"
             >
-              <img
-                src={getCardThumbnailSrc(c)}
-                alt={c.nameKo}
-                className={[
-                  "aspect-[3/5] w-full rounded-md border object-cover",
-                  c.arcana === "MAJOR"
-                    ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_28px_rgba(251,191,36,0.18)]"
-                    : "border border-slate-200/10"
-                ].join(" ")}
-                loading="lazy"
-              />
+              {c.arcana === "MAJOR" ? (
+                <div
+                  className={[
+                    "relative rounded-md p-[6px]",
+                    "bg-gradient-to-br from-amber-200 via-yellow-400 to-amber-200",
+                    "shadow-[0_0_0_1px_rgba(255,215,0,0.55),0_0_34px_rgba(251,191,36,0.22)]"
+                  ].join(" ")}
+                >
+                  <div
+                    aria-hidden
+                    className={[
+                      "pointer-events-none absolute inset-0 rounded-md opacity-70 mix-blend-overlay",
+                      "bg-[conic-gradient(from_180deg,rgba(255,255,255,0),rgba(255,255,255,0.38),rgba(255,255,255,0))]",
+                      "animate-spin [animation-duration:3.2s]"
+                    ].join(" ")}
+                  />
+                  <div className="relative overflow-hidden rounded-[8px]">
+                    <img
+                      src={getCardThumbnailSrc(c)}
+                      alt={c.nameKo}
+                      className="aspect-[3/5] w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={getCardThumbnailSrc(c)}
+                  alt={c.nameKo}
+                  className="aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover"
+                  loading="lazy"
+                />
+              )}
               <div className="mt-2 truncate text-sm font-medium text-slate-100">{c.nameKo}</div>
               <div className="truncate text-xs text-slate-400">{c.nameEn}</div>
               <div className="mt-2 flex flex-wrap gap-1">

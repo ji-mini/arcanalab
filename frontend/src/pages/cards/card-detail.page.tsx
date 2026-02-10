@@ -52,16 +52,33 @@ function CardDetailContent(props: { data: GetTarotCardResponse }) {
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div>
-          <img
-            src={getCardFullSrc(c)}
-            alt={c.nameKo}
-            className={[
-              "w-full rounded-xl border object-cover",
-              c.arcana === "MAJOR"
-                ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_34px_rgba(251,191,36,0.18)]"
-                : "border border-slate-200/10"
-            ].join(" ")}
-          />
+          {c.arcana === "MAJOR" ? (
+            <div
+              className={[
+                "relative rounded-xl p-[8px]",
+                "bg-gradient-to-br from-amber-200 via-yellow-400 to-amber-200",
+                "shadow-[0_0_0_1px_rgba(255,215,0,0.55),0_0_40px_rgba(251,191,36,0.22)]"
+              ].join(" ")}
+            >
+              <div
+                aria-hidden
+                className={[
+                  "pointer-events-none absolute inset-0 rounded-xl opacity-70 mix-blend-overlay",
+                  "bg-[conic-gradient(from_180deg,rgba(255,255,255,0),rgba(255,255,255,0.38),rgba(255,255,255,0))]",
+                  "animate-spin [animation-duration:3.6s]"
+                ].join(" ")}
+              />
+              <div className="relative overflow-hidden rounded-[16px]">
+                <img src={getCardFullSrc(c)} alt={c.nameKo} className="w-full object-cover" />
+              </div>
+            </div>
+          ) : (
+            <img
+              src={getCardFullSrc(c)}
+              alt={c.nameKo}
+              className="w-full rounded-xl border border-slate-200/10 object-cover"
+            />
+          )}
           <div className="mt-3 flex flex-wrap gap-2">
             <Badge>{c.arcana === "MAJOR" ? "메이저" : "마이너"}</Badge>
             {c.suit ? <Badge>{suitKo(c.suit)}</Badge> : null}

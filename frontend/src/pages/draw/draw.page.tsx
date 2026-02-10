@@ -125,7 +125,9 @@ export function DrawPage() {
           </div>
           <div className="mt-6 rounded-xl border border-slate-200/10 bg-slate-950/20 p-5 backdrop-blur">
             <div className="text-sm font-semibold text-slate-50">리딩</div>
-            <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-200">{mutation.data.draw.readingText}</pre>
+            <pre className="mt-3 whitespace-pre-wrap font-sans text-[15px] leading-7 tracking-[-0.01em] text-slate-200">
+              {mutation.data.draw.readingText}
+            </pre>
           </div>
         </Card>
       ) : null}
@@ -140,17 +142,43 @@ function DrawCard(props: { item: DrawItemDto }) {
   const isMajor = it.card.arcana === "MAJOR";
   return (
     <div className="rounded-xl border border-slate-200/10 bg-slate-950/20 p-4 backdrop-blur">
-      <img
-        src={getCardThumbnailSrc(it.card)}
-        alt={it.card.nameKo}
-        className={[
-          "aspect-[3/5] w-full rounded-md border object-cover origin-center transform-gpu transition-transform duration-200",
-          isMajor
-            ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_28px_rgba(251,191,36,0.18)]"
-            : "border border-slate-200/10",
-          isReversed ? "rotate-180" : ""
-        ].join(" ")}
-      />
+      {isMajor ? (
+        <div
+          className={[
+            "relative rounded-md p-[6px]",
+            "bg-gradient-to-br from-amber-200 via-yellow-400 to-amber-200",
+            "shadow-[0_0_0_1px_rgba(255,215,0,0.55),0_0_34px_rgba(251,191,36,0.22)]"
+          ].join(" ")}
+        >
+          <div
+            aria-hidden
+            className={[
+              "pointer-events-none absolute inset-0 rounded-md opacity-70 mix-blend-overlay",
+              "bg-[conic-gradient(from_180deg,rgba(255,255,255,0),rgba(255,255,255,0.38),rgba(255,255,255,0))]",
+              "animate-spin [animation-duration:3.2s]"
+            ].join(" ")}
+          />
+          <div className="relative overflow-hidden rounded-[8px]">
+            <img
+              src={getCardThumbnailSrc(it.card)}
+              alt={it.card.nameKo}
+              className={[
+                "aspect-[3/5] w-full object-cover origin-center transform-gpu transition-transform duration-200",
+                isReversed ? "rotate-180" : ""
+              ].join(" ")}
+            />
+          </div>
+        </div>
+      ) : (
+        <img
+          src={getCardThumbnailSrc(it.card)}
+          alt={it.card.nameKo}
+          className={[
+            "aspect-[3/5] w-full rounded-md border border-slate-200/10 object-cover origin-center transform-gpu transition-transform duration-200",
+            isReversed ? "rotate-180" : ""
+          ].join(" ")}
+        />
+      )}
       <div className="mt-3 text-sm font-semibold text-slate-50">
         {it.position}. {it.card.nameKo}
       </div>
