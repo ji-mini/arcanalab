@@ -3,7 +3,7 @@ import type { CreateDrawRequest, CreateDrawResponse, DrawDto } from "@shared/con
 import { getEnv } from "@/config/env";
 import { generateReadingText } from "@/lib/openai";
 import { ServiceError } from "@/lib/service-error";
-import { createDraw } from "@/repositories/draws.repository";
+import { createDraw, getLatestDrawByDateAndCardCount } from "@/repositories/draws.repository";
 import { getTarotCardById, listAllTarotCardIds } from "@/repositories/tarot-cards.repository";
 
 const MIN_CARD_COUNT = 1;
@@ -17,6 +17,12 @@ export async function createTodayDraw(req: CreateDrawRequest): Promise<CreateDra
 
   const now = new Date();
   const date = now.toISOString().slice(0, 10);
+
+  // 하루에 장수(cardCount)별로 1회만 생성: 이미 있으면 그대로 반환
+  const existing = await getLatestDrawByDateAndCardCount({ date, cardCount });
+  if (existing) {
+    return { draw: mapDrawDto(existing) };
+  }
 
   const ids = await listAllTarotCardIds();
   if (ids.length < cardCount) {

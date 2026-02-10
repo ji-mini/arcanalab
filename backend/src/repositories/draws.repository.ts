@@ -25,6 +25,19 @@ export async function getDrawById(drawId: string) {
   });
 }
 
+export async function getLatestDrawByDateAndCardCount(params: { date: string; cardCount: number }) {
+  return prisma.draw.findFirst({
+    where: { date: params.date, cardCount: params.cardCount },
+    orderBy: { drawnAt: "desc" },
+    include: {
+      items: {
+        orderBy: { position: "asc" },
+        include: { tarotCard: true }
+      }
+    }
+  });
+}
+
 export async function listRecentDraws(limit: number) {
   return prisma.draw.findMany({
     orderBy: { drawnAt: "desc" },

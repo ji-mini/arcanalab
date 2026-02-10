@@ -8,6 +8,27 @@ import { getCardThumbnailSrc } from "@/lib/card-image";
 
 type CardCountValue = "1" | "2" | "3";
 
+function MysticalLoadingLabel() {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span
+        aria-hidden
+        className="text-amber-200/90 animate-spin [animation-duration:2.4s]"
+      >
+        ✶
+      </span>
+      <span className="bg-gradient-to-r from-amber-100 via-amber-200 to-violet-200 bg-clip-text text-transparent animate-pulse">
+        뽑는 중
+      </span>
+      <span aria-hidden className="inline-flex items-end gap-0.5">
+        <span className="inline-block animate-bounce [animation-delay:0ms]">.</span>
+        <span className="inline-block animate-bounce [animation-delay:160ms]">.</span>
+        <span className="inline-block animate-bounce [animation-delay:320ms]">.</span>
+      </span>
+    </span>
+  );
+}
+
 export function DrawPage() {
   const [cardCount, setCardCount] = useState<CardCountValue>("1");
 
@@ -37,7 +58,7 @@ export function DrawPage() {
             onClick={() => mutation.mutate({ cardCount: selectedCount })}
             disabled={mutation.isPending}
           >
-            {mutation.isPending ? "뽑는 중..." : "뽑기"}
+            {mutation.isPending ? <MysticalLoadingLabel /> : "뽑기"}
           </Button>
         </div>
 
