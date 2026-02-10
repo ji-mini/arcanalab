@@ -58,7 +58,7 @@ function CardDetailContent(props: { data: GetTarotCardResponse }) {
             className={[
               "w-full rounded-xl border object-cover",
               c.arcana === "MAJOR"
-                ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_28px_rgba(251,191,36,0.18)]"
+                ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_34px_rgba(251,191,36,0.18)]"
                 : "border border-slate-200/10"
             ].join(" ")}
           />

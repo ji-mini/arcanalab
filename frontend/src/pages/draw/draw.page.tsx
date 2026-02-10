@@ -146,7 +146,7 @@ function DrawCard(props: { item: DrawItemDto }) {
         className={[
           "aspect-[3/5] w-full rounded-md border object-cover origin-center transform-gpu transition-transform duration-200",
           isMajor
-            ? "border-2 border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_24px_rgba(251,191,36,0.18)]"
+            ? "border-[10px] border-amber-300/90 shadow-[0_0_0_1px_rgba(251,191,36,0.35),0_0_28px_rgba(251,191,36,0.18)]"
             : "border border-slate-200/10",
           isReversed ? "rotate-180" : ""
         ].join(" ")}
